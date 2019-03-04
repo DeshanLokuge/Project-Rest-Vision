@@ -1,4 +1,4 @@
-  library(dplyr)
+library(dplyr)
 library(DT)
 library(ggplot2)
 library(maps)
@@ -8,7 +8,6 @@ library(leaflet)
 library(httr)
 library(jsonlite)
 
-options(tigris_use_cache = TRUE)
 source("key.R")
 
 function(input, output){
@@ -40,7 +39,7 @@ function(input, output){
   
   # waits for the button to be pressed before getting data to be plotted
   observeEvent(input$location_button, {
-    query.params = list(term = input$search_box, location = input$location_box)
+    query.params <- list(term = input$search_box, location = input$location_box)
     specific_data <- getData(query.params)
     
     # extracts the long, lat of the middle of the data set in question
