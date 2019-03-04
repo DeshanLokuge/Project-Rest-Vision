@@ -4,7 +4,6 @@ library(DT)
 library(shinythemes)
 
 
-
 shinyUI(
   fluidPage(
     theme = shinytheme("superhero"),
@@ -23,10 +22,10 @@ shinyUI(
                             textInput("location_box", "Type your location here"),
                             
                             selectInput("demographic","Demographic of Interest",
-                                        choices = c("Total median age" = "B01002_001",
-                                                    "Total Median age of Males" = "B01002_002",
-                                                    "Gross Median Rent" = "B25031_001",
-                                                    "Mortgage" = "B25097_002")),
+                                        choices = c("Total median age",
+                                                    "Total Median age of Males",
+                                                    "Gross Median Rent",
+                                                    "Mortgage")),
                             
                             actionButton("location_button", label = "", icon = shiny::icon("search"))
                           ),

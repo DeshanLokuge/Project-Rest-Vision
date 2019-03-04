@@ -39,7 +39,7 @@ function(input, output){
   
   # waits for the button to be pressed before getting data to be plotted
   observeEvent(input$location_button, {
-    query.params <- list(term = input$search_box, location = input$location_box)
+    query.params = list(term = input$search_box, location = input$location_box)
     specific_data <- getData(query.params)
     
     # extracts the long, lat of the middle of the data set in question
@@ -63,14 +63,21 @@ function(input, output){
     # Matching the state to the city typed in by the user within the Yelp application
     state_name <- as.character(city_table[which(city_table$city == input$location_box), c("state_name")])
     
+    ## Getting the data from the tidycensus API
+    # Assigning the IDs repective to the demographic features into a dataframe
+    demographic_tbl <- data.frame(demo_name=c("Total median age","Total Median age of Males","Gross Median Rent","Mortgage"), id=c("B01002_001","B01002_002","B25031_001","B25097_002"))
+    
+    # Getting the repective ID of the demographic to be assigned to the get_acs() function
+    demo_id <- as.character(demographic_tbl[which(demographic_tbl$demo_name == input$demographic), c("id")])
+    
     # Getting the data from the tidycensus API
     library(tidycensus)
-    df1 <- get_acs(geography = "county", state = state_name, variables = input$demographic, geometry = TRUE, year = 2016)
+    df1 <- get_acs(geography = "county", state = state_name, variables = demo_id, geometry = TRUE, year = 2016)
     
     # Getting a dataframe with "State" and "County" as seperate columns, without the "moe" column
     library(tidyr)
     df2 <- separate(df1, col = "NAME", into = c("County","State"), sep = ",", remove = TRUE) %>% dplyr::select(-moe)
-    
+
     
 #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Visualizing the two maps $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$#
     
@@ -119,7 +126,7 @@ function(input, output){
               textsize = "15px",
               direction = "auto")) %>%
           
-          addLegend(pal = pal, values = ~estimate, title = "Demographic Estimate",opacity = 0.7,
+          addLegend(pal = pal, values = ~estimate, title = input$demographic,opacity = 0.7,
                     position = "topright") %>%
           
           addAwesomeMarkers(lng = business_frame$coordinates.longitude, 
@@ -155,7 +162,26 @@ function(input, output){
   
   
    
-
+  # # sets the color of the icons to be used  
+  # getColor <- function(business_frame) {
+  #   sapply(business_frame$rating, function(rating) {
+  #     if(rating >= 4.5) {
+  #       "green"
+  #     } else if(rating >= 3.5) {
+  #       "orange"
+  #     } else {
+  #       "red"
+  #     } })
+  # }
+  # 
+  # # creates a list of icons to be used by the map
+  # icons <- awesomeIcons(
+  #   icon = 'ios-close',
+  #   iconColor = 'black',
+  #   library = 'ion',
+  #   markerColor = getColor(business_frame)
+  # )
+  
   
   
   
