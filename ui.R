@@ -35,7 +35,24 @@ shinyUI(
                             leafletOutput('myMap', height = "800")
      )
     )
-   )
+   ),
+               # Creates tab panel for Categories
+               tabPanel("Categories",
+                        sidebarLayout(
+                          sidebarPanel(
+                            p("This shows the most popular restaurant categories for the location searched."),
+                            hr(),
+                            textInput("search_location_categories", "Enter a location:"),
+                            actionButton("analysis_button", label = "", icon = shiny::icon("search")),
+                            hr(),
+                            p("This computation may take a while.")
+                          ),
+                          mainPanel(
+                            plotOutput("analytics")
+                          )
+                        )         
+               )
+   
   )
  )
 )

@@ -28,9 +28,9 @@ function(input, output){
 ##################################### LOCATION SEARCH TAB #####################################
   
   # creates a default map zoomed out to view the US 
-  map <- leaflet() %>% addTiles() %>% setView(-101.204687, 40.607628, zoom = 3)
+  map <- leaflet() %>% addProviderTiles(provider = "Esri.WorldImagery") %>% setView(-101.204687, 40.607628, zoom = 3)
   output$myMap <- renderLeaflet(map)
-
+  
 #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Getting the Yelp data $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$#
   
   # preps variables that will be used later for plotting
@@ -61,6 +61,7 @@ function(input, output){
     city_table <- read.csv("city_table.csv",header = TRUE)
     
     # Matching the state to the city typed in by the user within the Yelp application
+    library(stringr)
     state_name <- as.character(city_table[which(city_table$city == input$location_box), c("state_name")])
     
     ## Getting the data from the tidycensus API
@@ -130,61 +131,36 @@ function(input, output){
                     position = "topright") %>%
           
           addAwesomeMarkers(lng = business_frame$coordinates.longitude, 
-                            lat = business_frame$coordinates.latitude, label = business_frame$name)
+                            lat = business_frame$coordinates.latitude, icon=icons, label = business_frame$name)
         
       })
     }  
+    # sets the color of the icons to be used  
+    getColor <- function(business_frame) {
+      sapply(business_frame$rating, function(rating) {
+        if(rating >= 4.5) {
+          "green"
+        } else if(rating >= 3.5) {
+          "orange"
+        } else {
+          "red"
+        } })
+    }
+    
+    # creates a list of icons to be used by the map
+    icons <- awesomeIcons(
+      icon = 'ios-close',
+      iconColor = 'black',
+      library = 'ion',
+      markerColor = getColor(business_frame)
+    )
     
   })
 
 }  
  
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-   
-  # # sets the color of the icons to be used  
-  # getColor <- function(business_frame) {
-  #   sapply(business_frame$rating, function(rating) {
-  #     if(rating >= 4.5) {
-  #       "green"
-  #     } else if(rating >= 3.5) {
-  #       "orange"
-  #     } else {
-  #       "red"
-  #     } })
-  # }
-  # 
-  # # creates a list of icons to be used by the map
-  # icons <- awesomeIcons(
-  #   icon = 'ios-close',
-  #   iconColor = 'black',
-  #   library = 'ion',
-  #   markerColor = getColor(business_frame)
-  # )
-  
-  
-  
-  
+
   
   
   
