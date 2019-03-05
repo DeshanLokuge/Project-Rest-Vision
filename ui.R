@@ -3,10 +3,10 @@ library(shiny)
 library(DT)
 library(shinythemes)
 
-
 shinyUI(
   fluidPage(
     theme = shinytheme("superhero"),
+    titlePanel("PROJECT REST VISION"),
     #themeSelector(),
     navbarPage("REST-VISION", inverse = TRUE,
                
@@ -19,7 +19,7 @@ shinyUI(
                             
                             textInput("search_box", "Type your business here"),
                             
-                            textInput("location_box", "Type your location here"),
+                            textInput("location_box", "Type your city here"),
                             
                             selectInput("demographic","Demographic of Interest",
                                         choices = c("Total median age",
@@ -29,7 +29,7 @@ shinyUI(
                             
                             actionButton("location_button", label = "", icon = shiny::icon("search"))
                           ),
-                
+                          
                           # Outputs the map
                           mainPanel(
                             leafletOutput('myMap', height = "800")
