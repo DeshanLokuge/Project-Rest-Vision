@@ -8,8 +8,7 @@ The two main data sources used within this application are:
 
 Our app pulls data from the Yelp Fusion API, https://www.yelp.com/fusion. 
 We used the "Business Search" and "Restaurant Search" endpoints mainly for this application.
-
-On top of the data for each restaurant derived from the Yelp databas, 
+ 
 
 **Packages Used**
 
