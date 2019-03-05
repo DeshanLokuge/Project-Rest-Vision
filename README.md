@@ -1,7 +1,14 @@
 **API and Data**
 
+The two main data sources used within this application are:
+- Restaurant related data from the Yelp Fusion database
+(This does not have direct public access) 
+- Demographic data derived from the tidycensus data
+(This does not have restrictions to the data access)
 Our app pulls data from the Yelp Fusion API, https://www.yelp.com/fusion. 
 We used the "Business Search" and "Restaurant Search" endpoints mainly for this application.
+
+On top of the data for each restaurant derived from the Yelp databas, 
 
 **Packages Used**
 
@@ -24,7 +31,7 @@ Once the API key is with you, it can be save as a seperate R file as:
 Key <- "Enter the key you have been given by the Yelp Fusion"
 
 Name this as key.R and call this file within the server using:
-source(key.R) 
-This get the application code provided here up and running.
+source("key.R") 
+This will get the application code provided here up and running.
 
 
