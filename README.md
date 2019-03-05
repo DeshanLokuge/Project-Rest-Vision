@@ -5,6 +5,7 @@ The two main data sources used within this application are:
 (This does not have direct public access) 
 - Demographic data derived from the tidycensus data
 (This does not have restrictions to the data access)
+
 Our app pulls data from the Yelp Fusion API, https://www.yelp.com/fusion. 
 We used the "Business Search" and "Restaurant Search" endpoints mainly for this application.
 
