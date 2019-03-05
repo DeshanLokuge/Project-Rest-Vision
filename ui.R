@@ -8,7 +8,7 @@ shinyUI(
   fluidPage(
     theme = shinytheme("superhero"),
     #themeSelector(),
-    navbarPage("Trabeya", inverse = TRUE,
+    navbarPage("REST-VISION", inverse = TRUE,
                
                # Creates a tab panel for Location Search
                tabPanel("Restaurant Search",
@@ -29,7 +29,7 @@ shinyUI(
                             
                             actionButton("location_button", label = "", icon = shiny::icon("search"))
                           ),
-                          
+                
                           # Outputs the map
                           mainPanel(
                             leafletOutput('myMap', height = "800")
