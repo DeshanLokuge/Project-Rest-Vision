@@ -3,9 +3,6 @@ library(shiny)
 library(DT)
 library(shinythemes)
 
-city_table <- read.csv("city_table.csv",header = TRUE)
-
-
 shinyUI(
   fluidPage(
     theme = shinytheme("superhero"),
@@ -19,22 +16,21 @@ shinyUI(
                           sidebarPanel(
                             p("Shows locations of businesses on a map based on your search term."),
                             hr(),
-                          
+                            
                             textInput("search_box", "Type your business here"),
                             
-                            ##################################################
-                            selectizeInput("region_box", "Please select region",
-                                           choices=c("United States","Other")),
+                            textInput("location_box", "Type your city here"),
                             
-                            uiOutput("region_output"), #For city selection based on region
-                            uiOutput("region_output2"), #For demographic selection if region = United States
-                            ##################################################
+                            selectInput("demographic","Demographic of Interest",
+                                        choices = c("Total median age",
+                                                    "Total Median age of Males",
+                                                    "Gross Median Rent",
+                                                    "Mortgage",
+                                                    "Not interested")),
                             
                             actionButton("location_button", label = "", icon = shiny::icon("search"))
-                            
                           ),
                           
-                         
                           # Outputs the map
                           mainPanel(
                             leafletOutput('myMap', height = "800")
