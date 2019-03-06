@@ -3,6 +3,8 @@ library(shiny)
 library(DT)
 library(shinythemes)
 
+city_table <- read.csv("city_table.csv",header = TRUE)
+
 
 shinyUI(
   fluidPage(
@@ -17,28 +19,49 @@ shinyUI(
                           sidebarPanel(
                             p("Shows locations of businesses on a map based on your search term."),
                             hr(),
-                            
+                          
                             textInput("search_box", "Type your business here"),
                             
-                            textInput("location_box", "Type your city here"),
+                            ##################################################
+                            selectizeInput("region_box", "Please select region",
+                                           choices=c("United States","Other")),
                             
-                            selectInput("demographic","Demographic of Interest",
-                                        choices = c("Total median age",
-                                                    "Total Median age of Males",
-                                                    "Gross Median Rent",
-                                                    "Mortgage",
-                                                    "Not interested")),
+                            uiOutput("region_output"), #For city selection based on region
+                            uiOutput("region_output2"), #For demographic selection if region = United States
+                            ##################################################
                             
                             actionButton("location_button", label = "", icon = shiny::icon("search"))
+                            
                           ),
                           
+                         
                           # Outputs the map
                           mainPanel(
                             leafletOutput('myMap', height = "800")
      )
     )
-   )
+   ),
 
-  )
+   # Creates a tab panel for Business Search
+   tabPanel("Business Search",
+            sidebarLayout(
+              
+              sidebarPanel(
+                p("Shows a table of businesses based on your search terms."),
+                hr(),
+                textInput("search_input", "Type your search here"),
+                textInput("location_input", "Type your location here"),
+                actionButton("search_button", label = "", icon = shiny::icon("search"))
+                
+              ),
+              
+              # outputs the data table of businesses
+              mainPanel(
+                dataTableOutput("businesses")
+              )
+            )
+   )
+   
+     )
  )
 )
