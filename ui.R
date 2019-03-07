@@ -3,10 +3,11 @@ library(shiny)
 library(DT)
 library(shinythemes)
 
+
 shinyUI(
   fluidPage(
     theme = shinytheme("superhero"),
-    titlePanel("PROJECT REST VISION"),
+    titlePanel("PROJECT REST-VISION"),
     #themeSelector(),
     navbarPage("REST-VISION", inverse = TRUE,
                
@@ -25,7 +26,8 @@ shinyUI(
                                         choices = c("Total median age",
                                                     "Total Median age of Males",
                                                     "Gross Median Rent",
-                                                    "Mortgage")),
+                                                    "Mortgage",
+                                                    "Not interested")),
                             
                             actionButton("location_button", label = "", icon = shiny::icon("search"))
                           ),
@@ -35,24 +37,8 @@ shinyUI(
                             leafletOutput('myMap', height = "800")
      )
     )
-   ),
-               # Creates tab panel for Categories
-               tabPanel("Categories",
-                        sidebarLayout(
-                          sidebarPanel(
-                            p("This shows the most popular restaurant categories for the location searched."),
-                            hr(),
-                            textInput("search_location_categories", "Enter a location:"),
-                            actionButton("analysis_button", label = "", icon = shiny::icon("search")),
-                            hr(),
-                            p("This computation may take a while.")
-                          ),
-                          mainPanel(
-                            plotOutput("analytics")
-                          )
-                        )         
-               )
-   
+   )
+
   )
  )
 )
