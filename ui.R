@@ -4,6 +4,9 @@ library(leaflet)
 library(shiny)
 library(DT)
 library(shinythemes)
+library(shinyalert)
+library(shinycustomloader)
+library(shinycssloaders)
 
 
 # Loading the city_table from directory
@@ -12,7 +15,7 @@ city_table <- read.csv("city_table.csv",header = TRUE)
 # The Shiny User Interface
 shinyUI(
   fluidPage(
-    theme = shinytheme("united"),
+    theme = shinytheme("superhero"),
     titlePanel("PROJECT REST-VISION"),
     #themeSelector(),
     navbarPage("REST-VISION", inverse = TRUE,
@@ -24,16 +27,17 @@ shinyUI(
                             p("Shows locations of businesses on a map based on your search term."),
                             hr(),
                             
-                            textInput("search_box", "Type your business here"),
+                            textInput("search_box", "Enter Your Keywords Here"),
                             
                             #_______________________________________________________________________________#
-                            selectizeInput("region_box", "Please select region",
+                            selectizeInput("region_box", "Please select Region Here",
                                            choices=c("United States","Other")),
-                            
-                            uiOutput("region_output"), #For city selection based on region
+                            withSpinner(
+                            uiOutput("region_output"), type = 8, color = "#d83301"), #For city selection based on region
+                          
                             uiOutput("region_output2"), #For demographic selection if region = United States
                             #_______________________________________________________________________________#
-                            
+                            shinyalert::useShinyalert(),
                             actionButton("location_button", label = "", icon = shiny::icon("search"))
                             
                           ),
@@ -41,7 +45,8 @@ shinyUI(
                           
                           # Outputs the map
                           mainPanel(
-                            leafletOutput('myMap', height = "800")
+                            withSpinner(
+                              leafletOutput('myMap', height = "800"), type = 8, color = "#d83301")
                           )
                         )
                ),
@@ -56,13 +61,14 @@ shinyUI(
                             textInput("search_input", "Type your search here"),
                             textInput("location_input", "Type your location here"),
                             
+                            shinyalert::useShinyalert(),
                             actionButton("search_button", label = "", icon = shiny::icon("search"))
                             
                           ),
                           
                           # Outputs the data table of businesses
                           mainPanel(
-                            dataTableOutput("businesses")
+                            dataTableOutput("businesses"), type = "html", loader = "dnaspin"
                           )
                         )
                )

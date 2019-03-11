@@ -13,6 +13,9 @@ library(jsonlite)
 library(stringr)
 library(tidycensus)
 library(htmltools)
+library(shinyalert)
+library(shinycustomloader)
+library(shinycustomloader)
 
 # Loading the city table
 city_table <- read.csv("city_table.csv",header = TRUE)
@@ -103,15 +106,22 @@ function(input,output){
       # Extracts the long, lat of the middle of the data set in question
       region <- specific_data[[3]]
       center <- region[[1]]
+
+      #----------------------------------------------------shiny alert-------------------------------------------------------------#
       
-      # Flattens and extracts into one data frame
-      business_frame <- jsonlite::flatten(specific_data[[1]])
-      
-      # Adding "Top_Category" column to business_frame to facilitate tooltip information
-      
-      business_frame <- business_frame %>%
-        mutate(Top_Category = as.character(purrr::transpose(categories)[['title']][[1]][[1]]))
-      
+      # if (is.data.frame(specific_data[[1]])==FALSE) {
+      #   shinyalert(title = "Sorry...No Results Found...", type = "warning")
+      # }else{
+        
+        
+        # Flattens and extracts into one data frame
+        business_frame <- jsonlite::flatten(specific_data[[1]])
+
+        # Adding "Top_Category" column to business_frame to facilitate tooltip information
+        business_frame <- business_frame %>%
+          mutate(Top_Category = as.character(purrr::transpose(categories)[['title']][[1]][[1]]))
+      #}
+      #------------------------------------------------------------------------------------------------------------------------------#
       
       #_______________________________________________Getting the Tidy Census Data___________________________________________________#
       
@@ -287,13 +297,21 @@ function(input,output){
       region <- specific_data[[3]]
       center <- region[[1]]
       
-      # Flattens and extracts into one data frame
-      business_frame <- jsonlite::flatten(specific_data[[1]])
-      
-      # Adding "Top_Category" column to business_frame to facilitate tooltip information
-      
-      business_frame <- business_frame %>%
-        mutate(Top_Category = as.character(purrr::transpose(categories)[['title']][[1]][[1]]))
+      #-------------------------------------------------------shiny alert----------------------------------------------------------#
+      if (is.data.frame(specific_data[[1]])==FALSE) {
+        shinyalert(title = "Sorry...No Results Found...", type = "warning")
+
+      }else{
+        
+        
+        # Flattens and extracts into one data frame
+        business_frame <- jsonlite::flatten(specific_data[[1]])
+        
+        # Adding "Top_Category" column to business_frame to facilitate tooltip information
+        business_frame <- business_frame %>%
+          mutate(Top_Category = as.character(purrr::transpose(categories)[['title']][[1]][[1]]))
+      }
+      #----------------------------------------------------------------------------------------------------------------------------#
       
       
       # Now Visualizing the map given with Original Yelp App
@@ -348,50 +366,63 @@ function(input,output){
   ################################################### BUSINESS SEARCH TAB ###########################################################
   
   # Waits for the button to be pressed before getting data to be plotted
-  observeEvent(input$search_button, {  
-    
+  observeEvent(input$search_button, {
+
     withProgress(message = 'Fetching Data...Please Wait...',{
       query.params <- list(term = input$search_input, location = input$location_input, limit = 50)
       business_data <- getData(query.params)
-      
+
+      #-------------------------------------------------------shiny alert-------------------------------------------------------------#
+
+      if (is.data.frame(business_data[[1]])==FALSE) {
+        shinyalert(title = "Sorry...No Results Found...", type = "warning")
+      }else{
+
+
       # This line makes it so the data table can be printed without altering the values in these columns
-      compress <- jsonlite::flatten(business_data[[1]]) %>% 
-        select(-id, -is_closed, -location.display_address, 
-               -transactions, -coordinates.latitude, -coordinates.longitude, 
-               -distance, -phone)
-      
+      compress <- jsonlite::flatten(business_data[[1]]) %>%
+          select(-id, -is_closed, -location.display_address,
+                 -transactions, -coordinates.latitude, -coordinates.longitude,
+                 -distance, -phone)
+
+
       compress$image_url <- paste("<img src='", compress$image_url, "' height = '60'</img>", sep = "")
       compress$url <- paste0("<a href='", compress$url, "' class = 'button'>Website</a>")
-      
+
       # Combine addresses to make clean looking address column
-      compress$address <- paste0(compress$location.address1, "," , compress$location.city, ", ", 
-                                 compress$location.state, ", ", compress$location.zip_code, ", ", 
-                                 compress$location.country) 
-      
+      compress$address <- paste0(compress$location.address1, "," , compress$location.city, ", ",
+                                 compress$location.state, ", ", compress$location.zip_code, ", ",
+                                 compress$location.country)
+
       # Finally, deletes the extra address columns
       compress <- select(compress,-location.address1, -location.address2, -location.city,
                          -location.state, -location.zip_code, -location.address3, -location.country)
-      
+
       # adding the 'Categories' and 'Top_category' column for the compress data frame and removing the original "categories" column
-      compress <- compress %>% 
-        mutate(Categories = as.character(lapply(purrr::transpose(categories)[['title']], paste, collapse = ", "))) %>% 
-        mutate(Top_Category = as.character(purrr::transpose(categories)[['title']][[1]])) %>%
+      compress <- compress %>%
+        mutate(Categories = as.character(lapply(purrr::transpose(categories)[['title']], paste, collapse = ", "))) %>%
+        mutate(Top_Category = as.character(purrr::transpose(categories)[['title']][[1]][[1]])) %>%
         select(-categories)
-      
-      
+
+
       # Cleaning up the column titles
-      colnames(compress) <- c("Name","Alias","Image", "Yelp Link", "Review Count", "Rating", "Phone", 
-                              "Price Category", "Address", "Categories", "Top Category")    
-    })
-    
+      colnames(compress) <- c("Name","Alias","Image", "Yelp Link", "Review Count", "Rating", "Phone",
+                              "Price Category", "Address", "Categories", "Top Category")
+
+
+      }
+      #------------------------------------------------------------------------------------------------------------------------------#
+  })
+
     # sends the data table to the output UI, also allows for HTML tags to apply (i.e. <a href>)
     withProgress(message = 'Creating Table...Please Wait...',{
-      output$businesses <- renderDataTable(DT::datatable(compress, 
+      output$businesses <- renderDataTable(DT::datatable(compress,
                                                          escape = FALSE,
-                                                         selection = "none", 
-                                                         options = list(searchHighlight = TRUE), 
+                                                         selection = "none",
+                                                         options = list(searchHighlight = TRUE),
                                                          filter = "top"))
     })
   })
+
 }
 
