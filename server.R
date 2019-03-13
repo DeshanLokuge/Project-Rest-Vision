@@ -15,7 +15,7 @@ library(tidycensus)
 library(htmltools)
 library(shinyalert)
 library(shinycustomloader)
-library(shinycustomloader)
+library(shinycssloaders)
 
 # Loading the city table
 city_table <- read.csv("city_table.csv",header = TRUE)
@@ -44,7 +44,7 @@ function(input,output){
   #_________________________________________________________________________________________________________________________________#
   
   #Reative Input Selection For the Region Select
-  withProgress(message = "Acquiring data...Please Wait...",{
+  withProgress(message = "Acquiring data.Please Wait...",{
     
     # Giving the "location" selection option if the region is "United States"
     output$region_output <- renderUI({
@@ -101,27 +101,25 @@ function(input,output){
     if (input$region_box == "United States") {
       
       query.params = list(term = input$search_box, location = input$location_box_US)
+      
+      #-------------------------------------------------------shiny alert----------------------------------------------------------#
       specific_data <- getData(query.params)
       
-      # Extracts the long, lat of the middle of the data set in question
-      region <- specific_data[[3]]
-      center <- region[[1]]
-
-      #----------------------------------------------------shiny alert-------------------------------------------------------------#
-      
-      # if (is.data.frame(specific_data[[1]])==FALSE) {
-      #   shinyalert(title = "Sorry...No Results Found...", type = "warning")
-      # }else{
-        
+      if (is.data.frame(specific_data[[1]])==FALSE|length(specific_data)<3) {
+        shinyalert(title = "Sorry. No Results Found!", type = "warning")
+      }else{
+        # Extracts the long, lat of the middle of the data set in question
+        region <- specific_data[[3]]
+        center <- region[[1]]
         
         # Flattens and extracts into one data frame
         business_frame <- jsonlite::flatten(specific_data[[1]])
-
+        
         # Adding "Top_Category" column to business_frame to facilitate tooltip information
         business_frame <- business_frame %>%
           mutate(Top_Category = as.character(purrr::transpose(categories)[['title']][[1]][[1]]))
-      #}
-      #------------------------------------------------------------------------------------------------------------------------------#
+      }
+      #----------------------------------------------------------------------------------------------------------------------------#
       
       #_______________________________________________Getting the Tidy Census Data___________________________________________________#
       
@@ -291,19 +289,17 @@ function(input,output){
     } else {
       
       query.params = list(term = input$search_box, location = input$location_box_Other)
-      specific_data <- getData(query.params)
-      
-      # Extracts the long, lat of the middle of the data set in question
-      region <- specific_data[[3]]
-      center <- region[[1]]
       
       #-------------------------------------------------------shiny alert----------------------------------------------------------#
-      if (is.data.frame(specific_data[[1]])==FALSE) {
-        shinyalert(title = "Sorry...No Results Found...", type = "warning")
-
+      specific_data <- getData(query.params)
+      
+      if (is.data.frame(specific_data[[1]])==FALSE|length(specific_data)<3) {
+        shinyalert(title = "Sorry. No Results Found!", type = "warning")
       }else{
-        
-        
+        # Extracts the long, lat of the middle of the data set in question
+        region <- specific_data[[3]]
+        center <- region[[1]]
+
         # Flattens and extracts into one data frame
         business_frame <- jsonlite::flatten(specific_data[[1]])
         
@@ -368,14 +364,16 @@ function(input,output){
   # Waits for the button to be pressed before getting data to be plotted
   observeEvent(input$search_button, {
 
-    withProgress(message = 'Fetching Data...Please Wait...',{
+    withProgress(message = 'Fetching Data.Please Wait ...',{
+      
       query.params <- list(term = input$search_input, location = input$location_input, limit = 50)
-      business_data <- getData(query.params)
 
       #-------------------------------------------------------shiny alert-------------------------------------------------------------#
-
-      if (is.data.frame(business_data[[1]])==FALSE) {
-        shinyalert(title = "Sorry...No Results Found...", type = "warning")
+      
+      business_data <- getData(query.params)
+      
+      if (is.data.frame(business_data[[1]])==FALSE|length(business_data)<3) {
+        shinyalert(title = "Sorry. No Results Found!", type = "warning")
       }else{
 
 
@@ -425,4 +423,5 @@ function(input,output){
   })
 
 }
+
 
