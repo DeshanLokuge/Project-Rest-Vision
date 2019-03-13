@@ -7,23 +7,24 @@ library(shinythemes)
 library(shinyalert)
 library(shinycustomloader)
 library(shinycssloaders)
-
+library(feather)
 
 # Loading the city_table from directory
-city_table <- read.csv("city_table.csv",header = TRUE)
+city_table <- read_feather("city_table.feather") %>% as.data.frame()
 
 # The Shiny User Interface
 shinyUI(
   fluidPage(
-    theme = shinytheme("superhero"),
-    titlePanel("PROJECT REST-VISION"),
-    #themeSelector(),
-    navbarPage("REST-VISION", inverse = TRUE,
+    theme = shinytheme("darkly"),
+    titlePanel("PROJECT REST VISION"),
+    navbarPage(title = "REST VISION", 
+               inverse = TRUE,
                
                # Creating a tab panel for Location Search 
                tabPanel("Restaurant Search",
                         sidebarLayout(
                           sidebarPanel(
+                            img(src="myLogo.png",height=200,width=200),br(),br(),
                             p("Shows locations of businesses on a map based on your search term."),
                             hr(),
                             
@@ -33,7 +34,7 @@ shinyUI(
                             selectizeInput("region_box", "Please select Region Here",
                                            choices=c("United States","Other")),
                             withSpinner(
-                            uiOutput("region_output"), type = 8, color = "#d83301"), #For city selection based on region
+                            uiOutput("region_output"), type = 8, color = "#00FA9A"), #For city selection based on region
                           
                             uiOutput("region_output2"), #For demographic selection if region = United States
                             #_______________________________________________________________________________#
@@ -41,12 +42,12 @@ shinyUI(
                             actionButton("location_button", label = "", icon = shiny::icon("search"))
                             
                           ),
-                          
-                          
+                           #_______________________________________________________________________________#
+
                           # Outputs the map
                           mainPanel(
                             withSpinner(
-                              leafletOutput('myMap', height = "800"), type = 8, color = "#d83301")
+                              leafletOutput('myMap', height = "800"), type = 8, color = "#00FA9A")
                           )
                         )
                ),
@@ -75,3 +76,4 @@ shinyUI(
     )
   )
 )
+

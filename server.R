@@ -5,8 +5,6 @@ library(tidyr)
 library(DT)
 library(ggplot2)
 library(maps)
-library(mapproj)
-library(ggmap)
 library(leaflet)
 library(httr)
 library(jsonlite)
@@ -16,9 +14,13 @@ library(htmltools)
 library(shinyalert)
 library(shinycustomloader)
 library(shinycssloaders)
+library(feather)
 
-# Loading the city table
-city_table <- read.csv("city_table.csv",header = TRUE)
+#------------------------------------City table manipulation using feather------------------------------------------#
+# Loading the city table with feather
+city_table <- read_feather("city_table.feather")
+#-------------------------------------------------------------------------------------------------------------------#
+
 
 # The Yelp API Key
 source("key.R")
@@ -51,10 +53,9 @@ function(input,output){
       
       if (input$region_box == "United States") {
         selectInput("location_box_US", 
-                    "Type into select your City here", 
-                    choices = as.vector(city_table$city), 
-                    selected = as.vector(city_table$city)[7960]) 
-        
+                    "Type into select your City Here", 
+                     choices = read_feather("city.feather"))
+
     # Giving the "location" selection option if the region is "Other"
       }else{
         textInput("location_box_Other", "Please type City")
@@ -418,7 +419,11 @@ function(input,output){
                                                          escape = FALSE,
                                                          selection = "none",
                                                          options = list(searchHighlight = TRUE),
-                                                         filter = "top"))
+                                                         filter = "top") %>% 
+        formatStyle(c('Name', 'Alias', 'Image', 'Review Count', 'Rating', 'Phone', 'Price Category',
+                      'Address', 'Categories', 'Top Category'),
+                    color = 'black',  fontWeight = 'bold') 
+      )
     })
   })
 
