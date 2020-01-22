@@ -1,0 +1,1 @@
+yelp_api_key <- "c2R8DL21LtpsRgLTQRP4CAEY1r2cn2zL7bFS8lRoh9tb9hIVtWh2vxBwsXPHbMvRbvb-De3cLZ305qO5iABFQonaRHc7S9bTfC2zu_MA_trfPmE_jClsuPx0yhIoXnYx"

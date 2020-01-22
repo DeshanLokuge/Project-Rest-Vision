@@ -16,6 +16,9 @@ library(shinycustomloader)
 library(shinycssloaders)
 library(feather)
 
+#Library used for hosting the app
+library(rsconnect)
+
 #------------------------------------City table manipulation using feather------------------------------------------#
 # Loading the city table with feather
 city_table <- read_feather("city_table.feather")
@@ -24,6 +27,9 @@ city_table <- read_feather("city_table.feather")
 
 # The Yelp API Key
 source("key.R")
+
+# Census API Key
+# census_api_key("c4352fd10fc02435dd4cd13ee7479ee9083a24e7", overwrite = TRUE, install = TRUE)
 
 function(input,output){
   
@@ -54,7 +60,7 @@ function(input,output){
       if (input$region_box == "United States") {
         selectInput("location_box_US", 
                     "Type into select your City Here", 
-                     choices = read_feather("city.feather"))
+                     choices = read_feather("city_table.feather"))
 
     # Giving the "location" selection option if the region is "Other"
       }else{
