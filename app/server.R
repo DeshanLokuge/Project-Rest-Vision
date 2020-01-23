@@ -16,7 +16,7 @@ library(shinycustomloader)
 library(shinycssloaders)
 library(feather)
 
-#Library used for hosting the app
+# Loading rsconnect to host at shinyapps.io
 library(rsconnect)
 
 #------------------------------------City table manipulation using feather------------------------------------------#
@@ -29,7 +29,8 @@ city_table <- read_feather("city_table.feather")
 source("key.R")
 
 # Census API Key
-# census_api_key("c4352fd10fc02435dd4cd13ee7479ee9083a24e7", overwrite = TRUE, install = TRUE)
+census_api_key("c4352fd10fc02435dd4cd13ee7479ee9083a24e7", overwrite = TRUE, install = TRUE)
+readRenviron("~/.Renviron")
 
 function(input,output){
   

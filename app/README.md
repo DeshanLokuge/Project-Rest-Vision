@@ -47,5 +47,3 @@ The application maninly provides the user with two tabs:
   - This tab has the functionality of displaying a data table including a range of information that Yelp is providing in terms of each restaurant such as the top food category, food category range, price level, image of the food in search, address of the restaurant location etc.
   - The functionality of filtering each seatch is also available for each column of the data table for the convenience of searching the item of interest.
 
-**The application is hosted at shinyapps.io server**
-Application can be viewed via this link: https://deshanlokuge.shinyapps.io/project-rest-vision/
